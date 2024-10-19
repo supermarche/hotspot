@@ -68,7 +68,7 @@ ndvi_class[ndvi_scaled >= 5000] = 4  # Dichte Vegetation
 
 # Visualisierung des NDVI
 plt = mpyplot.figure()
-img = mpyplot.imshow(ndvi_class[2000:4000,7000:9000], cmap='RdYlGn')
+img = mpyplot.imshow(ndvi_class[2000:4000,7000:9000], cmap='hot')
 plt.colorbar(img)
 #plt.title('NDVI-Klassifizierung')
 plt.savefig("tmp.pdf", dpi=1200)
