@@ -1,4 +1,4 @@
-# hotspot -- generating maps from sentinel / copernicus data of surface temperature
+# hotspot - generating maps of the land surface temperature from copernicus / sentinel data
 
 References:
 - Land Surface Temperature (LST):
@@ -8,3 +8,4 @@ References:
   - With empirical models based on NIR/SWIR data from copernicus / sentinel 2.
     - https://www.brockmann-consult.de/mvn/os/org/esa/beam/sen4lst/
     - ref: s6_2sobri.pdf
+  - LST / remote sensing overview: 520257208.pdf
