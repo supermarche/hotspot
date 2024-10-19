@@ -7,5 +7,7 @@ References:
     - https://sentinels.copernicus.eu/en/web/sentinel/technical-guides/sentinel-3-slstr/level-2/land-surface-temperature-lst
   - With empirical models based on NIR/SWIR data from copernicus / sentinel 2.
     - https://www.brockmann-consult.de/mvn/os/org/esa/beam/sen4lst/
-    - ref: s6_2sobri.pdf
+    - ref:
+      - s6_2sobri.pdf
+      - Land_Surface_Temperature_Retrieval_from_Landsat_5.pdf
   - LST / remote sensing overview: 520257208.pdf
