@@ -200,15 +200,16 @@ if __name__ == "__main__":
     }
 
     # Define the bands to be used
+    #bands = ["B04", "B08", "B11", "B03"]
     bands = ["B04", "B08", "B11", "B03"]
-
     # Create an instance of the SentinelDownloader
     downloader = SentinelDownloader(
         client_id=client_id,
         client_secret=client_secret,
         bbox=goerlitz_bbox,
         time_range=time_range,
-        bands=bands
+        bands=bands,
+        satellite_type="sentinel-2-l1c"
     )
 
     seearch = downloader.search_data()

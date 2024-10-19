@@ -1,0 +1,53 @@
+### POST OAuth2 Data to get access_token_response
+POST {{baseUrl}}/auth/realms/CDSE/protocol/openid-connect/token
+Accept: application/json
+Content-Type: application/x-www-form-urlencoded
+
+client_id={{clientId}}&client_secret={{secret}}&grant_type=client_credentials
+
+> {% client.global.set("access_token", response.body.access_token); %}
+
+
+
+### GET Something
+POST https://sh.dataspace.copernicus.eu/api/v1/process
+Content-Type: application/json
+#Accept: application/tar
+Authorization: Bearer {{access_token}}
+
+{
+  "input": {
+    "bounds": {
+      "bbox": [
+        1360000,
+        5121900,
+        1370000,
+        5131900
+      ],
+      "properties": {"crs": "http://www.opengis.net/def/crs/EPSG/0/3857"}
+    },
+    "data": [
+      {
+        "type": "sentinel-1-grd",
+        "dataFilter": {
+          "timeRange": {
+            "from": "2019-02-02T00:00:00Z",
+            "to": "2019-04-02T23:59:59Z"
+          }
+        },
+        "processing": {"orthorectify": "true"}
+      }
+    ]
+  },
+  "output": {
+    "width": 512,
+    "height": 512,
+    "responses": [
+      {
+        "identifier": "default",
+        "format": {"type": "image/png"}
+      }
+    ]
+  },
+  "evalscript": "//VERSION=3\nfunction setup() {\n    return {\n        input: [\"VV\"],\n        output: { id: \"default\", bands: 1 },\n    }\n}\n\nfunction evaluatePixel(samples) {\n    return [2 * samples.VV]\n}"
+}

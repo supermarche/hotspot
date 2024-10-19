@@ -1,2 +1,11 @@
-# hotspot
-heat map generation from copernicus data
+# hotspot - generating maps of the land surface temperature from copernicus / sentinel data
+
+References:
+- Land Surface Temperature (LST):
+  - As a level 2 product from copernicus, low resolution. Not suitable for urban area heat classification.
+    - https://docs.sentinel-hub.com/api/latest/data/planet/planetary-variables/land-surface-temp/
+    - https://sentinels.copernicus.eu/en/web/sentinel/technical-guides/sentinel-3-slstr/level-2/land-surface-temperature-lst
+  - With empirical models based on NIR/SWIR data from copernicus / sentinel 2.
+    - https://www.brockmann-consult.de/mvn/os/org/esa/beam/sen4lst/
+    - ref: s6_2sobri.pdf
+  - LST / remote sensing overview: 520257208.pdf
