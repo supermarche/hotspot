@@ -14,6 +14,8 @@ import rasterio.plot as plot
 import matplotlib.pyplot as mpyplot
 import os
 
+import NDBI_Index as ndbi
+
 # Pfad zu deinem .SAFE Ordner
 safe_folder = 'S2B_MSIL1C_20241016T100029_N0511_R122_T33UWS_20241016T151956.SAFE/GRANULE/L1C_T33UWS_A039759_20241016T100611/IMG_DATA'
 
@@ -56,7 +58,7 @@ with rasterio.open('ndvi_output.tif', 'w', **ndvi_meta) as dst:
     # Schreibe das 2D-Array
     dst.write(ndvi_scaled, 1)
 
-#print("NDVI-GeoTIFF wurde erstellt: ndvi_output.tif")
+
 
 # Definiere NDVI-Klassen (z.B. 4 Kategorien: Wasser, kahle Flächen, mäßige Vegetation, dichte Vegetation)
 ndvi_class = np.zeros_like(ndvi_scaled)
