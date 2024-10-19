@@ -21,7 +21,7 @@ safe_folder = 'S2B_MSIL1C_20241016T100029_N0511_R122_T33UWS_20241016T151956.SAFE
 
 # Lade das Rot-Band (Band 4) und das NIR-Band (Band 8) als .jp2-Dateien
 red_band_path = os.path.join(safe_folder, 'T33UWS_20241016T100029_B04.jp2')  # Band 4 (Rot)
-nir_band_path = os.path.join(safe_folder, 'T33UWS_20241016T100029_B8A.jp2')  # Band 8 (NIR)
+nir_band_path = os.path.join(safe_folder, 'T33UWS_20241016T100029_B08.jp2')  # Band 8 (NIR)
 
 # Öffne das Rot-Band (10m Auflösung)
 with rasterio.open(red_band_path) as red_src:
