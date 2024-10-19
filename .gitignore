@@ -1,0 +1,8 @@
+.idea
+secrets.py
+
+__pycache__
+
+#data
+*.jpg
+*.tiff
