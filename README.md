@@ -10,4 +10,5 @@ References:
     - ref:
       - s6_2sobri.pdf
       - Land_Surface_Temperature_Retrieval_from_Landsat_5.pdf
+  - https://terrascope.be/en/cases/urban-heat-island-mapping-combined-sentinel-2-and-sentinel-3-observations
   - LST / remote sensing overview: 520257208.pdf
