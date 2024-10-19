@@ -3,6 +3,7 @@ from requests_oauthlib import OAuth2Session
 from io import BytesIO
 from PIL import Image
 import numpy as np
+import json
 import rasterio
 from rasterio.transform import from_bounds
 from rasterio.crs import CRS
@@ -11,7 +12,7 @@ import secrets
 
 
 class SentinelDownloader:
-    def __init__(self, client_id, client_secret, bbox, time_range, bands, satellite_type="sentinel-2-l2a"):
+    def __init__(self, client_id, client_secret, bbox, time_range, bands, satellite_type="sentinel-2-l1c"):
         self.client_id = client_id
         self.client_secret = client_secret
         self.bbox = bbox  # Expected in EPSG:4326 (latitude and longitude)
@@ -30,8 +31,14 @@ class SentinelDownloader:
         self.origin_epsg = 4326
         self.target_epsg = 25833
 
+    def update_time(self, time_range):
+        self.time_range = time_range
+        self.create_payload()
+
     def setup_session(self):
         """Set up the OAuth session and fetch the access token."""
+        # Token
+        # https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings
         client = BackendApplicationClient(client_id=self.client_id)
         self.oauth = OAuth2Session(client=client)
         # Get token for the session
@@ -88,6 +95,29 @@ class SentinelDownloader:
             "evalscript": self.evalscript
         }
 
+    def search_data(self):
+        #https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search?collections=sentinel-2-l2a&bbox=13,45,14,46&limit=1&datetime=2020-12-10T00:00:00Z/2020-12-30T00:00:00Z&filter=eo:cloud_cover>90&fields=id,type,-geometry,bbox,properties,-links,-assets
+
+        # DOKU:
+        #https://documentation.dataspace.copernicus.eu/APIs/SentinelHub/ApiReference.html#tag/catalog_item_search/operation/getCatalogItemSearch
+        data = {
+            "bbox": self.bbox,
+            "datetime": f"{self.time_range['from']}/{self.time_range['to']}",
+            "collections": [self.satellite_type],
+            #"limit": 1000,
+            "filter": "eo:cloud_cover < 30",
+            "distinct": "date",
+        }
+        response = self.oauth.post(
+            'https://sh.dataspace.copernicus.eu/api/v1/catalog/1.0.0/search',
+            headers={"Authorization": f"Bearer {self.token}"},
+            json=data,
+
+        )
+        #print(json.loads(response.content)["features"])
+
+        return json.loads(response.content)["features"]
+
     def download_data(self):
         """Download data using the Process API."""
         response = self.oauth.post(
@@ -139,17 +169,17 @@ class SentinelDownloader:
             for i in range(count):
                 band = self.bands[i]
                 with rasterio.open(
-                        f"{band}_{filename}",
+                        f"../data/{band}_{filename}",
                         'w',
                         driver='GTiff',
                         height=height,
                         width=width,
-                        count=count,
+                        count=1,
                         dtype=image_array.dtype,
                         crs=crs,
                         transform=transform
                 ) as dst:
-                    dst.write(image_array[:, :, i], i + 1)
+                    dst.write(image_array[:, :, i], 1)
 
                 print(f"GeoTIFF saved successfully as {filename}.")
         except Exception as e:
@@ -165,12 +195,12 @@ if __name__ == "__main__":
 
     # Define the time range
     time_range = {
-        "from": "2023-09-01T00:00:00Z",
-        "to": "2023-09-30T23:59:59Z"
+        "from": "2023-01-01T00:00:00Z",
+        "to": "2023-12-30T23:59:59Z"
     }
 
     # Define the bands to be used
-    bands = ["B04", "B08"]
+    bands = ["B04", "B08", "B11", "B03"]
 
     # Create an instance of the SentinelDownloader
     downloader = SentinelDownloader(
@@ -181,8 +211,14 @@ if __name__ == "__main__":
         bands=bands
     )
 
-    # Download the data
-    data = downloader.download_data()
+    seearch = downloader.search_data()
+    for avalible_photo in seearch:
+        curent_time_range = {
+            "from": f"{avalible_photo}T00:00:00Z",
+            "to": f"{avalible_photo}T23:59:59Z"
+        }
+        downloader.update_time(curent_time_range)
+        data = downloader.download_data()
+        downloader.save_as_geotiff(data, f"{avalible_photo}_{downloader.satellite_type}.tiff")
 
-    # Save the data as a GeoTIFF with geospatial metadata
-    downloader.save_as_geotiff(data, 'sentinel-2-l2a_gr.tiff')
+
