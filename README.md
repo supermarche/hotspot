@@ -6,3 +6,5 @@ References:
     - https://docs.sentinel-hub.com/api/latest/data/planet/planetary-variables/land-surface-temp/
     - https://sentinels.copernicus.eu/en/web/sentinel/technical-guides/sentinel-3-slstr/level-2/land-surface-temperature-lst
   - With empirical models based on NIR/SWIR data from copernicus / sentinel 2.
+    - https://www.brockmann-consult.de/mvn/os/org/esa/beam/sen4lst/
+    - ref: s6_2sobri.pdf
