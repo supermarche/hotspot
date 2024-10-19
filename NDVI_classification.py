@@ -40,6 +40,7 @@ with rasterio.open(nir_band_path) as nir_src:
 ndvi = (nir - red) / (nir + red)
 
 # Skaliere den NDVI-Wert auf einen Bereich von -1 bis 1 auf int16
+# wird benötigt, da von jp2 keine direkte konvertierung in tif möglich ist
 ndvi_scaled = np.clip(ndvi, -1, 1) * 10000  # Multiplizieren, um den Bereich zu vergrößern
 ndvi_scaled = ndvi_scaled.astype('int16')  # Konvertiere zu int16
 
@@ -57,8 +58,19 @@ with rasterio.open('ndvi_output.tif', 'w', **ndvi_meta) as dst:
 
 #print("NDVI-GeoTIFF wurde erstellt: ndvi_output.tif")
 
+# Definiere NDVI-Klassen (z.B. 4 Kategorien: Wasser, kahle Flächen, mäßige Vegetation, dichte Vegetation)
+ndvi_class = np.zeros_like(ndvi_scaled)
+ndvi_class[ndvi_scaled < 0] = 1   # Wasser
+ndvi_class[(ndvi_scaled >= 0) & (ndvi_scaled < 2000)] = 2   # Karge Flächen
+ndvi_class[(ndvi_scaled >= 2000) & (ndvi_scaled < 5000)] = 3  # Mäßige Vegetation
+ndvi_class[ndvi_scaled >= 5000] = 4  # Dichte Vegetation
+
+
 # Visualisierung des NDVI
 plt = mpyplot.figure()
-mpyplot.imshow(ndvi_scaled[2000:4000,7000:9000])
+img = mpyplot.imshow(ndvi_class[2000:4000,7000:9000], cmap='RdYlGn')
+plt.colorbar(img)
+#plt.title('NDVI-Klassifizierung')
 plt.savefig("tmp.pdf", dpi=1200)
+plt.show()
 #plot.savefig(ndvi_scaled, cmap='RdYlGn') #RdYlGn - Ist ein Farbspektrum von rot über gelb zu grün
