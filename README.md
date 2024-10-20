@@ -8,4 +8,6 @@ References:
   - With empirical models based on NIR/SWIR data from copernicus / sentinel 2.
     - https://www.brockmann-consult.de/mvn/os/org/esa/beam/sen4lst/
     - ref: s6_2sobri.pdf
+    - LandSat example: https://custom-scripts.sentinel-hub.com/landsat-8/land_surface_temperature_mapping/
+    - Sentinel 3 example: https://custom-scripts.sentinel-hub.com/sentinel-3/land_surface_temperature/
   - LST / remote sensing overview: 520257208.pdf
