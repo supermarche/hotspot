@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>GeoTIFF Overlay auf OSM mit UTM-Koordinaten</title>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="js/proj4.js"></script>
+    <!--    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css"/>-->
+    <!--    <script src="https://cdn.jsdelivr.net/npm/geotiff/dist/geotiff.bundle.min.js"></script>-->
+    <!--    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>-->
+    <!--    <script src="https://unpkg.com/leaflet-geotiff/leaflet-geotiff.js"></script>-->
+    <!--    <script src="https://unpkg.com/plotty/dist/plotty.min.js"></script>-->
+    <!--    <script src="https://unpkg.com/leaflet-geotiff/leaflet-geotiff-plotty.js"></script>-->
+
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="https://cdn.jsdelivr.net/npm/geotiff"></script>
+<!--    <script src="js/leaflet-geotiff.js"></script>-->
+<!--    <script src="js/plotty.js"></script>-->
+<!--    &lt;!&ndash; Load any renderer you need &ndash;&gt;-->
+<!--    <script src="js/leaflet-geotiff-plotty.js"></script>-->
+<!--    <script src="js/leaflet-geotiff-vector-arrows.js"></script>-->
+</head>
+<body>
+<div id="map" style="width: 100%; height: 600px;"></div>
+<script>
+    if (typeof L === 'undefined') {
+        console.error('Leaflet could not be found!');
+    } else {
+        var map = L.map('map').setView([51.505, -0.09], 13);
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        var geotiffUrl = 'tif/dgm1_33493_5664_1_sn.tif';
+        proj4.defs("EPSG:32632", "+proj=utm +zone=32 +datum=WGS84 +units=m +no_defs");
+
+        var utmX = 493000.0000000000000000;
+        var utmY = 5665000.0000000000000000;
+        var wgs84Coordinates = proj4('EPSG:32632', 'EPSG:4326', [utmX, utmY]);
+
+        map.setView([wgs84Coordinates[1], wgs84Coordinates[0]], 13);
+
+        // // Lesen Sie die GeoJSON-Datei oder einen anderen unterstützten Dateityp
+        // const geojsonData = fs.readFileSync('path/to/your/file.geojson', 'utf8');
+
+
+        fetch(geotiffUrl).then(response => response.blob())
+            .then(blob => {
+                    const reader = new FileReader();
+                    reader.onload = function (event) {
+                        const arrayBuffer = event.target.result;
+                        var tiff = GeoTIFF.fromArrayBuffer(arrayBuffer);
+                        console.log("");
+                        // const tiff = GeoTIFF._parseTIFF(arrayBuffer);
+                        // const image = tiff.getImage();
+                        // const rasters = image.readRasters();
+                        // const metadata = image.getFileDirectory();
+                        // var extent = image.getBoundingBox();
+                        // var minCorner = proj4('EPSG:32632', 'EPSG:4326', [extent[0], extent[1]]);
+                        // var maxCorner = proj4('EPSG:32632', 'EPSG:4326', [extent[2], extent[3]]);
+                        //
+                        // if (L.leafletGeotiff) {
+                        //     var geoTiffLayer = L.leafletGeotiff(geotiffUrl, {
+                        //         band: 0,
+                        //         name: 'GeoTIFF Overlay',
+                        //         bounds: [[minCorner[1], minCorner[0]], [maxCorner[1], maxCorner[0]]],
+                        //         renderer: L.LeafletGeotiff.plotty({
+                        //             displayMin: 0,
+                        //             displayMax: 255,
+                        //             clampLow: false,
+                        //             clampHigh: false,
+                        //             colorScale: 'rainbow'
+                        //         })
+                        //     });
+                        //     geoTiffLayer.addTo(map);
+                        // } else {
+                        //     console.error('leafletGeotiff could not be found!');
+                        // }
+
+                    };
+                    reader.readAsArrayBuffer(blob);
+                }
+            )
+
+            // GeoTIFF.parse(geotiffUrl)
+            //     .then(tiff => tiff.getImage())
+            //     .then(image => {
+            //         // var rasters = image.readRasters();
+            //         // var extent = image.getBoundingBox();
+            //         // var minCorner = proj4('EPSG:32632', 'EPSG:4326', [extent[0], extent[1]]);
+            //         // var maxCorner = proj4('EPSG:32632', 'EPSG:4326', [extent[2], extent[3]]);
+            //         // if (L.leafletGeotiff) {
+            //         //     var geoTiffLayer = L.leafletGeotiff(geotiffUrl, {
+            //         //         band: 0,
+            //         //         name: 'GeoTIFF Overlay',
+            //         //         bounds: [[minCorner[1], minCorner[0]], [maxCorner[1], maxCorner[0]]],
+            //         //         renderer: L.LeafletGeotiff.plotty({
+            //         //             displayMin: 0,
+            //         //             displayMax: 255,
+            //         //             clampLow: false,
+            //         //             clampHigh: false,
+            //         //             colorScale: 'rainbow'
+            //         //         })
+            //         //     });
+            //         //     geoTiffLayer.addTo(map);
+            //         // } else {
+            //         //     console.error('leafletGeotiff could not be found!');
+            //         // }
+            //     })
+            .catch(error => {
+                console.error('Error loading the GeoTIFF file:', error);
+            });
+    }
+</script>
+</body>
+</html>
