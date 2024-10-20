@@ -29,7 +29,7 @@ token = oauth.fetch_token(
 url = "https://sh.dataspace.copernicus.eu/api/v1/process"
 
 # Define the bounding box for your area of interest
-bbox = [14.9300, 51.1300, 14.9800, 51.1600]  # Replace with your coordinates
+bbox = [14.9165, 51.0711, 15.0759, 51.2166]  # Replace with your coordinates
 
 # Define the evalscript to calculate NDVI, NDBI, and NDBI - NDVI
 evalscript = """
@@ -74,32 +74,34 @@ def save_as_geotiff(data, filename, bbox, crs_epsg=4326, target_epsg=25833):
             # Get image dimensions
             height, width = image_array.shape
 
-            # Transform bbox from EPSG:4326 (WGS84) to target EPSG
-            transformer = Transformer.from_crs(f"EPSG:{crs_epsg}", f"EPSG:{target_epsg}", always_xy=True)
-            xmin, ymin = transformer.transform(bbox[0], bbox[1])
-            xmax, ymax = transformer.transform(bbox[2], bbox[3])
+            if image_array.max() > 0:
 
-            # Create a geospatial transform
-            transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
+                # Transform bbox from EPSG:4326 (WGS84) to target EPSG
+                transformer = Transformer.from_crs(f"EPSG:{crs_epsg}", f"EPSG:{target_epsg}", always_xy=True)
+                xmin, ymin = transformer.transform(bbox[0], bbox[1])
+                xmax, ymax = transformer.transform(bbox[2], bbox[3])
 
-            # Define the coordinate reference system
-            crs = CRS.from_epsg(target_epsg)
+                # Create a geospatial transform
+                transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
 
-            # Write the data to a GeoTIFF file
-            with rasterio.open(
-                    filename,
-                    'w',
-                    driver='GTiff',
-                    height=height,
-                    width=width,
-                    count=1,  # Single band
-                    dtype=image_array.dtype,
-                    crs=crs,
-                    transform=transform
-            ) as dst:
-                dst.write(image_array, 1)  # Write to the first (and only) band
+                # Define the coordinate reference system
+                crs = CRS.from_epsg(target_epsg)
 
-            print(f"GeoTIFF saved successfully as {filename}.")
+                # Write the data to a GeoTIFF file
+                with rasterio.open(
+                        filename,
+                        'w',
+                        driver='GTiff',
+                        height=height,
+                        width=width,
+                        count=1,  # Single band
+                        dtype=image_array.dtype,
+                        crs=crs,
+                        transform=transform
+                ) as dst:
+                    dst.write(image_array, 1)  # Write to the first (and only) band
+
+                print(f"GeoTIFF saved successfully as {filename}.")
     except Exception as e:
         print(f"An error occurred while saving GeoTIFF: {e}")
 
@@ -138,6 +140,8 @@ while current_date < end_date:
             }]
         },
         "output": {
+            "width": 1500,  # 1500
+            "height": 1500,
             "responses": [{
                 "identifier": "default",
                 "format": {
