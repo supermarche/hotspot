@@ -92,6 +92,8 @@ Die Herausforderung besteht darin die verfügbaren Daten zusammenzuführen und Z
 
 [Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"
 [copernicus]: https://www.copernicus.eu/en "Copernicus"
+[Landsat-Datenbrowser]: https://earthexplorer.usgs.gov/ "Landsat Datenbrowser"
+[Landsat-Datenbrowser-login]: https://ers.cr.usgs.gov/login "Landsat Datenbrowser login"
 [openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"
 [geoserver]: https://www.geoserver.org/ "GeoServer"
 [chatgpt]: https://chat.openai.com/ "ChatGPT"
@@ -101,4 +103,5 @@ Die Herausforderung besteht darin die verfügbaren Daten zusammenzuführen und Z
 [georaster]: https://github.com/GeoTIFF/georaster "Georaster"
 [qgis]: https://qgis.org/en/site/ "QGIS"
 [Hackaton 2024]: https://hackathon2024.digitale-oberlausitz.eu/ "Hackaton 2024"
+
 
