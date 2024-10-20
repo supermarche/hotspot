@@ -40,6 +40,7 @@ Aufteilung in 3 Bereiches
 
 ### Umsatzung API Abruf
 
+Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisiert. Beispiele für das Abrufen der Daten sind unter `/src/utils` zu finden. Weitere Details zum Abruf sind in der Implementierung zu finden.
 
 
 ### Umsetzung Datenanalyse
