@@ -2,7 +2,9 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kweb.*
 import kweb.plugins.fomanticUI.fomantic
+import kweb.state.KVar
 import kweb.state.render
+import javax.swing.text.html.HTMLDocument
 
 object ServerPage {
 
@@ -42,6 +44,18 @@ object ServerPage {
                     }
                 }
             }
+            div {
+//                val sliderDiv = div(fomantic.ui.slider)
+//                div(fomantic.ui.input)
+                val sliderValue = kvar("3")
+
+                input(type = InputType.range,) {
+                    it.value = sliderValue
+                }
+
+
+            }
+
             render(model.errors) { errors ->
                 if (errors.isNotEmpty()) {
                     h4().text("Fehler:")
