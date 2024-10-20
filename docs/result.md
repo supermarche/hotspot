@@ -49,13 +49,13 @@ Aufteilung in 3 Bereiches
 
 
 ![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)  
-*Region Lausitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
+*Region Lausitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
 ![ausschnitt_gr.png](img/ausschnitt_gr.png)  
-*Region Görlitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
+*Region Görlitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
 ![senftenberger see.png](img/senftenberger%20see.png)  
-*Region Senftenberg: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
+*Region Senftenberg: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
 ###  Visualisierung
 
