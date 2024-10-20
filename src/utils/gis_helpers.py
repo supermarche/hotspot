@@ -1,6 +1,68 @@
 #import geopandas as gpd
 from shapely.geometry import Point, box
 from pyproj import Transformer
+from shapely.geometry import Point, box
+from pyproj import Transformer
+import rasterio
+from rasterio.transform import from_bounds
+from rasterio.crs import CRS
+from pyproj import Transformer
+from io import BytesIO
+from PIL import Image
+import numpy as np
+
+def save_as_geotiff(data, filename, bbox, crs_epsg=4326, target_epsg=25833, bands=[]):
+    # Convert data to a BytesIO object
+    image_data = BytesIO(data)
+
+    # Open the image using rasterio
+    with rasterio.open(image_data) as src:
+        num_bands = src.count  # Get the number of bands
+
+        # Loop through each band and process it
+        for band_index in range(1,num_bands+1):
+
+            if bands:
+                band_name = bands[band_index-1]
+            else:
+                band_name = ""
+            # Read the current band
+            image_array = src.read(band_index)
+
+            # Check if the band contains non-zero values
+            if float(image_array.max()) > 0:
+                # Get image dimensions
+                height, width = image_array.shape
+
+                # Transform bbox from EPSG:4326 (WGS84) to target EPSG
+                transformer = Transformer.from_crs(f"EPSG:{crs_epsg}", f"EPSG:{target_epsg}", always_xy=True)
+                xmin, ymin = transformer.transform(bbox[0], bbox[1])
+                xmax, ymax = transformer.transform(bbox[2], bbox[3])
+
+                # Create a geospatial transform
+                transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
+
+                # Define the coordinate reference system
+                crs = CRS.from_epsg(target_epsg)
+
+                # Create a new filename for each band
+                band_filename = filename.replace(".tiff", f"_{band_name}.tiff")
+
+                # Write the data to a GeoTIFF file for the current band
+                with rasterio.open(
+                        band_filename,
+                        'w',
+                        driver='GTiff',
+                        height=height,
+                        width=width,
+                        count=1,  # Single band for each file
+                        dtype=image_array.dtype,
+                        crs=crs,
+                        transform=transform
+                ) as dst:
+                    dst.write(image_array, 1)  # Write to the first (and only) band
+                print(f"Band {band_index} saved as: {band_filename}")
+
 
 def convert_bbox_epsg25833_to_crs84(bbox):
     """
