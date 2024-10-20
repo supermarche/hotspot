@@ -17,7 +17,7 @@ Städte werden mit Blick auf den Klimawandel immer heißer. In Folge gibt gewiss
 ## Zielsetzung
 
 Zie ist es automatisiert eine Heatmap für Städte zu erstellen. Für die Berechnung der dafür notwendigen Daten sollen frei verfügbare Daten verwendet werden.
-Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen. 
+Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen.
 
 ## Ausgangslage
 
@@ -28,14 +28,15 @@ Es existieren viele verschiedene Datenquellen, die aktuelle Daten über geografi
 ## Vorgehensweise
 
 Es wurde geprüft, welche Satelliteninformationen zur Verfügung stehen und welche Daten diese liefern. Als geeignete Datenquelle wurde der [Copernicus-Browser] festgelegt.
-welche Daten für die erstellung einer Heatmap geeignet sind und welche Quellen diese liefern. 
+welche Daten für die erstellung einer Heatmap geeignet sind und welche Quellen diese liefern.
 
 Aufteilung in 3 Bereiches
 - Ansprechen der Copernicus-API, für einen automatischen Download der Daten
 - Analyse, welche Daten der Satelliten für die Berechnungen geeinget sind und wie diese verarbeitet werden müssen um Aussagekräftig zu sein
 - Möglichkeiten der Visualisierung der Daten prüfen
 
-
+![models.png](img/models.png)
+*Zwei Ansätze zur Erhöhung der räumlichen Auflösung*
 
 ### Umsatzung API Abruf
 
@@ -48,13 +49,13 @@ Aufteilung in 3 Bereiches
 - Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachflächen?
 
 
-![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)  
+![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)
 *Region Lausitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
-![ausschnitt_gr.png](img/ausschnitt_gr.png)  
+![ausschnitt_gr.png](img/ausschnitt_gr.png)
 *Region Görlitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
-![senftenberger see.png](img/senftenberger%20see.png)  
+![senftenberger see.png](img/senftenberger%20see.png)
 *Region Senftenberg: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
 ###  Visualisierung
@@ -67,7 +68,7 @@ Aufteilung in 3 Bereiches
 
 ![img.png](img/mockup.png)
 
-#### Ergebnis 
+#### Ergebnis
 
 - Eine erste Idee wie eine einfache Visualisierung aussehen könnte
 - mit Hilfe von Java-Script Bibliotheken wie [leafletjs], [geotiffjs] und  [georaster] lassen sich einfach die Daten von Open-Streetmap und Layerinformationen im GeoTiff-Format darstellen.
@@ -75,7 +76,7 @@ Aufteilung in 3 Bereiches
 
 
 
-# Probleme 
+# Probleme
 -grobe Auflösung
 Datenquellen ermitteln
 - Infrarot-Reflektionen eignen sich nur bedingt für die Ermittlung der Temperatur. Darüber lassen sich eher Rückschlüsse auf die Bebauung und den Boden schließen. Verschiedene Frequenzen, liefern unterschiedliche Werte. So reflektiert Wasser besonders stark, Betong aber auch stark. Grünflächen absorbieren stärker
@@ -84,7 +85,7 @@ Datenquellen ermitteln
 ## weiterführende Schritte, weitere Ideen
 
 ### Kommerzielle Anbieter
-Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpening" Lösung anbieten, um Heatmaps mit Satellitendaten zu erstellen? 
+Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpening" Lösung anbieten, um Heatmaps mit Satellitendaten zu erstellen?
 
 Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Sattelitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
 
@@ -104,19 +105,17 @@ Die Herausforderung besteht darin die verfügbaren Daten zusammenzuführen und Z
 
 ## Quellen
 
-[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"  
-[copernicus]: https://www.copernicus.eu/en "Copernicus"  
-[Landsat-Datenbrowser]: https://earthexplorer.usgs.gov/ "Landsat Datenbrowser"  
-[Landsat-Datenbrowser-login]: https://ers.cr.usgs.gov/login "Landsat Datenbrowser login"  
-[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap" 
-[geoserver]: https://www.geoserver.org/ "GeoServer"  
-[chatgpt]: https://chat.openai.com/ "ChatGPT"  
-[claudeai]: https://claude.ai/ "Claude AI"  
-[rasterio]: https://rasterio.readthedocs.io/en/latest/ "Rasterio"  
-[leafletjs]: https://leafletjs.com/ "Leafletjs"    
-[geotiffjs]: https://geotiffjs.github.io/ "Geotiffjs"  
-[georaster]: https://github.com/GeoTIFF/georaster "Georaster"  
-[qgis]: https://qgis.org/en/site/ "QGIS"  
-[Hackaton 2024]: https://hackathon2024.digitale-oberlausitz.eu/ "Hackaton 2024"  
-
-
+[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"
+[copernicus]: https://www.copernicus.eu/en "Copernicus"
+[Landsat-Datenbrowser]: https://earthexplorer.usgs.gov/ "Landsat Datenbrowser"
+[Landsat-Datenbrowser-login]: https://ers.cr.usgs.gov/login "Landsat Datenbrowser login"
+[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"
+[geoserver]: https://www.geoserver.org/ "GeoServer"
+[chatgpt]: https://chat.openai.com/ "ChatGPT"
+[claudeai]: https://claude.ai/ "Claude AI"
+[rasterio]: https://rasterio.readthedocs.io/en/latest/ "Rasterio"
+[leafletjs]: https://leafletjs.com/ "Leafletjs"
+[geotiffjs]: https://geotiffjs.github.io/ "Geotiffjs"
+[georaster]: https://github.com/GeoTIFF/georaster "Georaster"
+[qgis]: https://qgis.org/en/site/ "QGIS"
+[Hackaton 2024]: https://hackathon2024.digitale-oberlausitz.eu/ "Hackaton 2024"
