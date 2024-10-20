@@ -11,7 +11,7 @@ Städte werden mit Blick auf den Klimawandel immer heißer. In Folge gibt gewiss
 ## Zielsetzung
 
 Zie ist es automatisiert eine Heatmap für Städte zu erstellen. Für die Berechnung der dafür notwendigen Daten sollen frei verfügbare Daten verwendet werden.
-Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen. 
+Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen.
 
 ## Ausgangslage
 
@@ -22,7 +22,7 @@ Es existieren viele verschiedene Datenquellen, die aktuelle Daten über geografi
 ## Vorgehensweise
 
 Es wurde geprüft, welche Satelliteninformationen zur Verfügung stehen und welche Daten diese liefern. Als geeignete Datenquelle wurde der [Copernicus-Browser] festgelegt.
-welche Daten für die erstellung einer Heatmap geeignet sind und welche Quellen diese liefern. 
+welche Daten für die erstellung einer Heatmap geeignet sind und welche Quellen diese liefern.
 
 Aufteilung in 3 Bereiches
 - Ansprechen der Copernicus-API, für einen automatischen Download der Daten
@@ -37,7 +37,7 @@ Aufteilung in 3 Bereiches
 
 ### Umsetzung Datenanalyse
 
-- nicht triival
+- nicht trivial
 - Problem Wolkendecke
 - Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachfächen
 
@@ -53,15 +53,16 @@ Aufteilung in 3 Bereiches
 
 ![img.png](img/mockup.png)
 
-#### Ergebnis 
+#### Ergebnis
 
 - Eine erste Idee wie eine einfache Visualisierung aussehen könnte
 - mit Hilfe von Java-Script Bibliotheken wie [leafletjs], [geotiffjs] und  [georaster] lassen sich einfach die Daten von Open-Streetmap und Layerinformationen im GeoTiff-Format darstellen.
 - erste Beispiele wie die verfügbaren Libraries zur Visualisierung genutzt werden können sind unter `/src/main` zu finden.
 
+![lst_goerlitz](img/lst_goerlitz.png)
+** Kombination aus niedrig aufgelösten Temperaturdaten und hochaufgelöste Daten am Rande des Bereiches des sichtbaren Lichtes
 
-
-# Probleme 
+# Probleme
 -grobe Auflösung
 Datenquellen ermitteln
 - Infrarot-Reflektionen eignen sich nur bedingt für die Ermittlung der Temperatur. Darüber lassen sich eher Rückschlüsse auf die Bebauung und den Boden schließen. Verschiedene Frequenzen, liefern unterschiedliche Werte. So reflektiert Wasser besonders stark, Betong aber auch stark. Grünflächen absorbieren stärker
@@ -70,7 +71,7 @@ Datenquellen ermitteln
 ## weiterführende Schritte, weitere Ideen
 
 ### Kommerzielle Anbieter
-Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpening" Lösung anbieten, um Heatmaps mit Satellitendaten zu erstellen? 
+Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpening" Lösung anbieten, um Heatmaps mit Satellitendaten zu erstellen?
 
 Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Sattelitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
 
