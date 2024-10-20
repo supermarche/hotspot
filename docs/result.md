@@ -19,13 +19,11 @@ Städte werden mit Blick auf den Klimawandel immer heißer. In Folge gibt gewiss
 Zie ist es automatisiert eine Heatmap für Städte zu erstellen. Für die Berechnung der dafür notwendigen Daten sollen frei verfügbare Daten verwendet werden.
 Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen. 
 
-
 ## Ausgangslage
 
 Aktuell ist das Erstellen solcher Heatmaps sehr aufwendig und erfordert spezielle Software und Fachwissen, sowie manuelle Eingriffe. Unter Umständen gibt es bereits Lösungen, die Heatmaps für geografische Regionen automatisiert erstellen, auf die haben wir jedoch keinen Zugriff.
 
 Es existieren viele verschiedene Datenquellen, die aktuelle Daten über geografische Gebiete liefer, zum Beispiel Satellitenbilder, Wetterdaten, Verkehrsdaten, Open-Street-Map-Daten und viele mehr. Diese Daten können über APIs abgerufen werden. Je nach Datenquelle liegen diese Daten in verschiedene Formaten und Auflösungen vor.
-
 
 ## Vorgehensweise
 
@@ -41,12 +39,11 @@ Aufteilung in 3 Bereiches
 
 ### Umsatzung API Abruf
 
-Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisiert. Beispiele für das Abrufen der Daten sind unter `/src/utils` zu finden. Weitere Details zum Abruf sind in der Implementierung zu finden.
 
 
 ### Umsetzung Datenanalyse
 
-- nicht trivvial
+- nicht trivial
 - Problem Wolkendecke
 - Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachflächen?
 
@@ -79,9 +76,9 @@ Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisie
 
 
 # Probleme 
-
-- Unterschiedliche Auflösungen der Daten und eine teilweise sehr grobe Rasterung führen zu sehr uncharfen Bildern 
-- es erfordert ein hohes Fachwissen in Physik, Materialwissenschaften, Meteorologie und Mathematik um die Daten richtig zu interpretieren und berechnen zu können
+-grobe Auflösung
+Datenquellen ermitteln
+- Infrarot-Reflektionen eignen sich nur bedingt für die Ermittlung der Temperatur. Darüber lassen sich eher Rückschlüsse auf die Bebauung und den Boden schließen. Verschiedene Frequenzen, liefern unterschiedliche Werte. So reflektiert Wasser besonders stark, Betong aber auch stark. Grünflächen absorbieren stärker
 
 
 ## weiterführende Schritte, weitere Ideen
@@ -92,7 +89,6 @@ Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpenin
 Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Sattelitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
 
 Welche Möglichkeiten gibt es eine Heatmap mit einer Drohne für ein spezifisches Gebiet zu erstellen? Welche Kosten und Probleme ergeben sich daraus?
-
 
 ### Auswertung der Satellitendaten verbessern
 
