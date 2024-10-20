@@ -60,7 +60,7 @@ Aufteilung in 3 Bereiches
 - erste Beispiele wie die verfügbaren Libraries zur Visualisierung genutzt werden können sind unter `/src/main` zu finden.
 
 ![lst_goerlitz](img/lst_goerlitz.png)
-* Kombination aus niedrig aufgelösten Temperaturdaten und hochaufgelöste Daten am Rande des Bereiches des sichtbaren Lichtes *
+*Kombination aus niedrig aufgelösten Temperaturdaten und hochaufgelöste Daten am Rande des Bereiches des sichtbaren Lichtes*
 
 # Probleme
 -grobe Auflösung
