@@ -32,7 +32,7 @@ welche Daten für die erstellung einer Heatmap geeignet sind und welche Quellen 
 
 Aufteilung in 3 Bereiches
 - Ansprechen der Copernicus-API, für einen automatischen Download der Daten
-- Analyse, welche Daten der Satelliten für die Berechnungen geeinget sind und wie diese verarbeitet werden müssen um Aussagekräftig zu sein
+- Analyse, welche Daten der Satelliten für die Berechnungen geeing sind und wie diese verarbeitet werden müssen um Aussagekräftig zu sein
 - Möglichkeiten der Visualisierung der Daten prüfen
 
 ![models.png](img/models.png)
@@ -50,13 +50,13 @@ Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisie
 - Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachflächen?
 
 
-![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)
+![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)  
 *Region Lausitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
-![ausschnitt_gr.png](img/ausschnitt_gr.png)
+![ausschnitt_gr.png](img/ausschnitt_gr.png)  
 *Region Görlitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
-![senftenberger see.png](img/senftenberger%20see.png)
+![senftenberger see.png](img/senftenberger%20see.png)  
 *Region Senftenberg: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Thermalbäder, Auflösung 100m*
 
 ###  Visualisierung
@@ -67,7 +67,8 @@ Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisie
 - Ergänzen der Wetterinformationen für den Bereich an dem Tag
 
 
-![img.png](img/mockup.png)
+![img.png](img/mockup.png)  
+*Mockup für eine mögliche Visualisierung einer automatisch generierten Heatmap*
 
 #### Ergebnis
 
@@ -78,9 +79,9 @@ Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisie
 
 
 # Probleme
--grobe Auflösung
-Datenquellen ermitteln
-- Infrarot-Reflektionen eignen sich nur bedingt für die Ermittlung der Temperatur. Darüber lassen sich eher Rückschlüsse auf die Bebauung und den Boden schließen. Verschiedene Frequenzen, liefern unterschiedliche Werte. So reflektiert Wasser besonders stark, Betong aber auch stark. Grünflächen absorbieren stärker
+
+- Unterschiedliche Auflösungen der Daten und eine teilweise sehr grobe Rasterung führen zu sehr uncharfen Bildern
+- es erfordert ein hohes Fachwissen in Physik, Materialwissenschaften, Meteorologie und Mathematik um die Daten richtig zu interpretieren und berechnen zu können
 
 
 ## weiterführende Schritte, weitere Ideen
@@ -88,7 +89,7 @@ Datenquellen ermitteln
 ### Kommerzielle Anbieter
 Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpening" Lösung anbieten, um Heatmaps mit Satellitendaten zu erstellen?
 
-Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Sattelitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
+Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Satellitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
 
 Welche Möglichkeiten gibt es eine Heatmap mit einer Drohne für ein spezifisches Gebiet zu erstellen? Welche Kosten und Probleme ergeben sich daraus?
 
