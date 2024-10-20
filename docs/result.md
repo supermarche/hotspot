@@ -8,16 +8,24 @@ Umsetzung einer Projektidee aus dem [Hackaton 2024]
 
 Städte werden mit Blick auf den Klimawandel immer heißer. In Folge gibt gewisse Hotspots in den Städten, die sich überhitzen und die das Leben der Einwohner immer schwieriger machen. Mit verschiedenen Maßnahmen, wie bsp. zusätzliche Begrünung, Beschattung oder Entsiegelung jener Flächen, soll Lebensqualität in urbanen Räumen gezielt verbessert und die negativen Auswirkungen des Klimawandels gemindert werden.
 
+![csm_01_Hitzekarte-Sommer-2018_MODISmax_300dpi_8edd06453e.png](img/csm_01_Hitzekarte-Sommer-2018_MODISmax_300dpi_8edd06453e.png)
+*Hitzekarte Hessen Sommer 2024*
+
+
+
+
 ## Zielsetzung
 
 Zie ist es automatisiert eine Heatmap für Städte zu erstellen. Für die Berechnung der dafür notwendigen Daten sollen frei verfügbare Daten verwendet werden.
 Das Ergebnis soll Stadtplanern und Kommunen ermöglicht, den Prozess der Erreichung von Klimazielen zu vereinfachen. 
+
 
 ## Ausgangslage
 
 Aktuell ist das Erstellen solcher Heatmaps sehr aufwendig und erfordert spezielle Software und Fachwissen, sowie manuelle Eingriffe. Unter Umständen gibt es bereits Lösungen, die Heatmaps für geografische Regionen automatisiert erstellen, auf die haben wir jedoch keinen Zugriff.
 
 Es existieren viele verschiedene Datenquellen, die aktuelle Daten über geografische Gebiete liefer, zum Beispiel Satellitenbilder, Wetterdaten, Verkehrsdaten, Open-Street-Map-Daten und viele mehr. Diese Daten können über APIs abgerufen werden. Je nach Datenquelle liegen diese Daten in verschiedene Formaten und Auflösungen vor.
+
 
 ## Vorgehensweise
 
@@ -30,18 +38,26 @@ Aufteilung in 3 Bereiches
 - Möglichkeiten der Visualisierung der Daten prüfen
 
 
-
 ### Umsatzung API Abruf
 
+Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisiert. Beispiele für das Abrufen der Daten sind unter `/src/utils` zu finden. Weitere Details zum Abruf sind in der Implementierung zu finden.
 
 
 ### Umsetzung Datenanalyse
 
-- nicht triival
+- nicht trivvial
 - Problem Wolkendecke
-- Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachfächen
+- Wie funktioniert die IR Messung eines Satelliten. Muss der Strahl genau senkrecht sein? Problem bei Dachflächen?
 
 
+![1.Heatmap_Landsat_100m.png](img/1.Heatmap_Landsat_100m.png)  
+*Region Lausitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
+
+![ausschnitt_gr.png](img/ausschnitt_gr.png)  
+*Region Görlitz: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
+
+![senftenberger see.png](img/senftenberger%20see.png)  
+*Region Senftenberg: Heatmap ohne konkrete Temperaturangaben des Landsat 8, Termalbänder, Auflösung 100m*
 
 ###  Visualisierung
 
@@ -62,9 +78,9 @@ Aufteilung in 3 Bereiches
 
 
 # Probleme 
--grobe Auflösung
-Datenquellen ermitteln
-- Infrarot-Reflektionen eignen sich nur bedingt für die Ermittlung der Temperatur. Darüber lassen sich eher Rückschlüsse auf die Bebauung und den Boden schließen. Verschiedene Frequenzen, liefern unterschiedliche Werte. So reflektiert Wasser besonders stark, Betong aber auch stark. Grünflächen absorbieren stärker
+
+- Unterschiedliche Auflösungen der Daten und eine teilweise sehr grobe Rasterung führen zu sehr uncharfen Bildern 
+- es erfordert ein hohes Fachwissen in Physik, Materialwissenschaften, Meteorologie und Mathematik um die Daten richtig zu interpretieren und berechnen zu können
 
 
 ## weiterführende Schritte, weitere Ideen
@@ -75,6 +91,7 @@ Gibt es kommerzielle Anbieter die bereits eine automatisierte "Thermal Sharpenin
 Welche Möglichkeiten gibt es noch um auf besser aufgelöste Daten zurückgreifen zu können. Welche Anbieter gibt es die höher aufgelöste Daten anbieten? Welche Sattelitendaten sind noch geeignet um Rückschlüsse auf die Temperatur zu ziehen?
 
 Welche Möglichkeiten gibt es eine Heatmap mit einer Drohne für ein spezifisches Gebiet zu erstellen? Welche Kosten und Probleme ergeben sich daraus?
+
 
 ### Auswertung der Satellitendaten verbessern
 
@@ -90,15 +107,17 @@ Die Herausforderung besteht darin die verfügbaren Daten zusammenzuführen und Z
 
 ## Quellen
 
-[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"
-[copernicus]: https://www.copernicus.eu/en "Copernicus"
-[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"
-[geoserver]: https://www.geoserver.org/ "GeoServer"
-[chatgpt]: https://chat.openai.com/ "ChatGPT"
+[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"  
+[copernicus]: https://www.copernicus.eu/en "Copernicus"  
+[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"  
+[geoserver]: https://www.geoserver.org/ "GeoServer"  
+[chatgpt]: https://chat.openai.com/ "ChatGPT"  
 [claudeai]: https://claude.ai/ "Claude AI"
-[leafletjs]: https://leafletjs.com/ "Leafletjs"
-[geotiffjs]: https://geotiffjs.github.io/ "Geotiffjs"
-[georaster]: https://github.com/GeoTIFF/georaster "Georaster"
-[qgis]: https://qgis.org/en/site/ "QGIS"
-[Hackaton 2024]: https://hackathon2024.digitale-oberlausitz.eu/ "Hackaton 2024"
+[rasterio]: https://rasterio.readthedocs.io/en/latest/ "Rasterio"
+[leafletjs]: https://leafletjs.com/ "Leafletjs"  
+[geotiffjs]: https://geotiffjs.github.io/ "Geotiffjs"  
+[georaster]: https://github.com/GeoTIFF/georaster "Georaster"  
+[qgis]: https://qgis.org/en/site/ "QGIS"  
+[Hackaton 2024]: https://hackathon2024.digitale-oberlausitz.eu/ "Hackaton 2024"  
+
 
