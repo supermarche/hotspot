@@ -1,3 +1,4 @@
 ref/* filter=lfs diff=lfs merge=lfs -text
 /*.tif filter=lfs diff=lfs merge=lfs -text
 /*.jpg filter=lfs diff=lfs merge=lfs -text
+src/data/* filter=lfs diff=lfs merge=lfs -text

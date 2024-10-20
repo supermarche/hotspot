@@ -10,5 +10,7 @@ References:
     - ref:
       - s6_2sobri.pdf
       - Land_Surface_Temperature_Retrieval_from_Landsat_5.pdf
-  - https://terrascope.be/en/cases/urban-heat-island-mapping-combined-sentinel-2-and-sentinel-3-observations
+    - https://terrascope.be/en/cases/urban-heat-island-mapping-combined-sentinel-2-and-sentinel-3-observations
+      - LandSat example: https://custom-scripts.sentinel-hub.com/landsat-8/land_surface_temperature_mapping/
+      - Sentinel 3 example: https://custom-scripts.sentinel-hub.com/sentinel-3/land_surface_temperature/
   - LST / remote sensing overview: 520257208.pdf
