@@ -38,6 +38,7 @@ Aufteilung in 3 Bereiches
 - Möglichkeiten der Visualisierung der Daten prüfen
 
 
+
 ### Umsatzung API Abruf
 
 Der Abruf der Satellitendaten über die Copernicus-API wurde mit Python realisiert. Beispiele für das Abrufen der Daten sind unter `/src/utils` zu finden. Weitere Details zum Abruf sind in der Implementierung zu finden.
@@ -107,11 +108,13 @@ Die Herausforderung besteht darin die verfügbaren Daten zusammenzuführen und Z
 
 ## Quellen
 
-[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"  
-[copernicus]: https://www.copernicus.eu/en "Copernicus"  
-[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"  
-[geoserver]: https://www.geoserver.org/ "GeoServer"  
-[chatgpt]: https://chat.openai.com/ "ChatGPT"  
+[Copernicus-Browser] : https://browser.dataspace.copernicus.eu/ "Copernicus Browser"
+[copernicus]: https://www.copernicus.eu/en "Copernicus"
+[Landsat-Datenbrowser]: https://earthexplorer.usgs.gov/ "Landsat Datenbrowser"
+[Landsat-Datenbrowser-login]: https://ers.cr.usgs.gov/login "Landsat Datenbrowser login"
+[openstreetmap]: https://www.openstreetmap.org/ "OpenStreetMap"
+[geoserver]: https://www.geoserver.org/ "GeoServer"
+[chatgpt]: https://chat.openai.com/ "ChatGPT"
 [claudeai]: https://claude.ai/ "Claude AI"
 [rasterio]: https://rasterio.readthedocs.io/en/latest/ "Rasterio"
 [leafletjs]: https://leafletjs.com/ "Leafletjs"  
