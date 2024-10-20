@@ -3,14 +3,12 @@ from sentinel_search import search_satellite_imagery
 import secrets
 from gis_helpers import save_as_geotiff
 
-class Sentinel2Downloader:
-    def __init__(self, client_id, client_secret, bbox, time_range, bands, satellite_type="sentinel-2-l1c"):
+class Sentinel3Downloader:
+    def __init__(self, client_id, client_secret, bbox, time_range, band, satellite_type="sentinel-3-slstr"):
         # Authenticate the session using provided credentials
-        #self.client_id = client_id
-        #self.client_secret = client_secret
         self.bbox = bbox  # Expected in EPSG:4326 (latitude and longitude)
         self.time_range = time_range
-        self.bands = bands
+        self.band = band  # Single band for Sentinel-3 SLSTR
         self.satellite_type = satellite_type
         self.origin_epsg = 4326
         self.target_epsg = 25833
@@ -23,25 +21,22 @@ class Sentinel2Downloader:
         self.payload_template = self.create_payload_template()
 
     def create_evalscript(self):
-        """Create the evalscript based on the specified bands."""
-        bands_input = ', '.join([f'"{band}"' for band in self.bands])
-        bands_output = len(self.bands)
-        bands_formula = ', '.join([f'2.5 * sample.{band}' for band in self.bands])
-
+        """Create the evalscript for the specified band."""
         self.evalscript = f"""
         //VERSION=3
 
         function setup() {{
           return {{
-            input: [{bands_input}],
+            input: ["{self.band}"],
             output: {{
-              bands: {bands_output}
+              bands: 1,
+              sampleType: "UINT16"
             }}
           }};
         }}
 
         function evaluatePixel(sample) {{
-          return [{bands_formula}];
+          return [sample.{self.band}];
         }}
         """
 
@@ -60,8 +55,8 @@ class Sentinel2Downloader:
                 }]
             },
             "output": {
-                # TODO calculate resolution
-                "width": 100, # 1500
+                # Sentinel-3 SLSTR has specific resolutions, usually coarser than Sentinel-2
+                "width": 100,  # Adjust resolution based on data characteristics
                 "height": 100,
                 "responses": [{
                     "identifier": "default",
@@ -89,27 +84,27 @@ class Sentinel2Downloader:
         return response.content
 
 
-
 if __name__ == "__main__":
+    #sentinel-3-slstr
     client_id = secrets.client_name
     client_secret = secrets.client_secret
 
     # Define the bounding box and time range
     bbox = [14.9165, 51.0711, 15.0759, 51.2166]
     time_range = {"from": "2023-01-01T00:00:00Z", "to": "2023-12-30T23:59:59Z"}
-    bands = ["B04", "B08", "B11", "B03"]
+    band = "S8"  # Sentinel-3 SLSTR band for thermal infrared
 
-    downloader = Sentinel2Downloader(
+    downloader = Sentinel3Downloader(
         client_id=client_id,
         client_secret=client_secret,
         bbox=bbox,
         time_range=time_range,
-        bands=bands,
-        satellite_type="sentinel-2-l1c"
+        band=band,
+        satellite_type="sentinel-3-slstr"
     )
 
     filters = "eo:cloud_cover < 30"
-    satellite_types = ["sentinel-2-l1c"]
+    satellite_types = ["sentinel-3-slstr"]
 
     # Perform search
     results = search_satellite_imagery(authenticate_session, bbox, time_range, satellite_types, filters)
@@ -122,4 +117,4 @@ if __name__ == "__main__":
             "to": f"{date}T23:59:59Z"
         }
         data = downloader.download_data(current_time_range)
-        save_as_geotiff(data, f"../data/Sentinel-2/{date}_{downloader.satellite_type}.tiff", bbox=bbox, bands=bands)
+        save_as_geotiff(data, f"../data/Sentinel-3/{date}_{downloader.satellite_type}_{band}.tiff", bbox=bbox, bands=[band])
