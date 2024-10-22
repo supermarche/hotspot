@@ -5,7 +5,7 @@
 /.idea/
 /gradle/
 /S2B_MSIL1C_20241016T100029_N0511_R122_T33UWS_20241016T151956.SAFE/
-*.tif
+*.tiff
 *.pdf
 *.xml
 .idea
