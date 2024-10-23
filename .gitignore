@@ -9,7 +9,8 @@
 *.pdf
 *.xml
 .idea
-secrets.py
+sentinel_secrets.py
+secrets.
 
 __pycache__
 

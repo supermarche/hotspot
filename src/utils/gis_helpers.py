@@ -1,67 +1,49 @@
 #import geopandas as gpd
+import json
+
 from shapely.geometry import Point, box
 from pyproj import Transformer
 from shapely.geometry import Point, box
 from pyproj import Transformer
 import rasterio
 from rasterio.transform import from_bounds
+from rasterio.crs import CRS as rasterio_CRS
 from rasterio.crs import CRS
 from pyproj import Transformer
 from io import BytesIO
 from PIL import Image
 import numpy as np
 
-def save_as_geotiff(data, filename, bbox, crs_epsg=4326, target_epsg=25833, bands=[]):
-    # Convert data to a BytesIO object
-    image_data = BytesIO(data)
 
-    # Open the image using rasterio
-    with rasterio.open(image_data) as src:
-        num_bands = src.count  # Get the number of bands
+def save_tiff_and_metadata(array_data, transform, crs_epsg, output_path, bands_metadata):
+    """
+    Saves the GeoTIFF data returned by SentinelHub and writes associated metadata to a separate JSON file.
 
-        # Loop through each band and process it
-        for band_index in range(1,num_bands+1):
+    :param response_data: Binary content (GeoTIFF) from SentinelHub request
+    :param output_path: Path to save the GeoTIFF file
+    :param bands_metadata: Dictionary containing metadata for the bands
+    """
+    # Save the GeoTIFF file
+    raster_crs = rasterio_CRS.from_epsg(crs_epsg)
+    with rasterio.open(
+        output_path, 'w',
+        driver='GTiff',
+        height=array_data.shape[0],
+        width=array_data.shape[1],
+        count=array_data.shape[2],
+        dtype=array_data.dtype,
+        crs=raster_crs,
+        transform=transform
+    ) as dst:
+        for i in range(array_data.shape[2]):
+            dst.write(array_data[:, :, i], i + 1)  # Write each band
 
-            if bands:
-                band_name = bands[band_index-1]
-            else:
-                band_name = ""
-            # Read the current band
-            image_array = src.read(band_index)
+    # Save the metadata in a JSON file
+    metadata_path = output_path.replace('.tiff', '_metadata.json')
+    with open(metadata_path, 'w') as meta_file:
+        json.dump(bands_metadata, meta_file)
 
-            # Check if the band contains non-zero values
-            if float(image_array.max()) > 0:
-                # Get image dimensions
-                height, width = image_array.shape
-
-                # Transform bbox from EPSG:4326 (WGS84) to target EPSG
-                transformer = Transformer.from_crs(f"EPSG:{crs_epsg}", f"EPSG:{target_epsg}", always_xy=True)
-                xmin, ymin = transformer.transform(bbox[0], bbox[1])
-                xmax, ymax = transformer.transform(bbox[2], bbox[3])
-
-                # Create a geospatial transform
-                transform = from_bounds(xmin, ymin, xmax, ymax, width, height)
-
-                # Define the coordinate reference system
-                crs = CRS.from_epsg(target_epsg)
-
-                # Create a new filename for each band
-                band_filename = filename.replace(".tiff", f"_{band_name}.tiff")
-
-                # Write the data to a GeoTIFF file for the current band
-                with rasterio.open(
-                        band_filename,
-                        'w',
-                        driver='GTiff',
-                        height=height,
-                        width=width,
-                        count=1,  # Single band for each file
-                        dtype=image_array.dtype,
-                        crs=crs,
-                        transform=transform
-                ) as dst:
-                    dst.write(image_array, 1)  # Write to the first (and only) band
-                print(f"Band {band_index} saved as: {band_filename}")
+    print(f"Data and metadata saved to {output_path} and {metadata_path}")
 
 
 def convert_bbox_epsg25833_to_crs84(bbox):
