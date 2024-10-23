@@ -17,3 +17,4 @@ __pycache__
 #data
 *.jpg
 *.aux.xml
+/src/utils/standalone_scripts/secrets.py
