@@ -63,11 +63,12 @@ def calculate_lst_multiband_rasters(sentinel2_path, sentinel3_path, output_path,
     lambda_s8 = 10.85 * 10 ** -6  # Central wavelength for Sentinel-3 SLSTR S8 (meters)
     rho = 1.438 * 10 ** -2  # Planck constant * speed of light / Boltzmann constant (m K)
 
-    # Brightness Temperature (Convert from Kelvin to Celsius)
-    bt_celsius = s8_band # - 273.15
+    # Brightness Temperature (needs to remain in Kelvin, since the LST formula below
+    # scales with the absolute value of bt_kelvin, and not a temperature difference)
+    bt_kelvin = s8_band
 
     # Land Surface Temperature (LST)
-    lst = bt_celsius / (1 + (lambda_s8 * bt_celsius / rho) * np.log(lse))
+    lst = bt_kelvin / (1 + (lambda_s8 * bt_kelvin / rho) * np.log(lse))
 
     # Update metadata for output (same as input, but with a single band)
     sentinel2_meta.update(driver='GTiff', dtype=rasterio.float32, count=1)
