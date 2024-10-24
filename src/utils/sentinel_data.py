@@ -1,10 +1,14 @@
 import os
 from pathlib import Path
 
-from sentinelhub import BBox, CRS, MimeType, SentinelHubRequest, DataCollection, SentinelHubCatalog, bbox_to_dimensions
+from sentinelhub import BBox, CRS, MimeType, SentinelHubRequest, DataCollection, SentinelHubCatalog, bbox_to_dimensions, \
+    MosaickingOrder
 from src.utils.config import load_config
 from src.utils.gis_helpers import save_tiff_and_metadata
 from rasterio.transform import from_bounds
+
+from src.utils.helper_functions import normalize_to_weeks
+
 
 class SentinelData:
     def __init__(self):
@@ -30,7 +34,8 @@ class SentinelData:
             input_data=[
                 SentinelHubRequest.input_data(
                     data_collection=DataCollection.SENTINEL2_L1C.define_from("s2l1c", service_url=self.config.sh_base_url),
-                    time_interval=date_range
+                    time_interval=date_range,
+                    mosaicking_order=MosaickingOrder.LEAST_CC,
                 )
             ],
             responses=[
@@ -91,7 +96,7 @@ class SentinelData:
 
         return {"sentinel_2": dates_sentinel2, "sentinel_3": dates_sentinel3, "common_dates": common_dates}
 
-    def download_data_pack(self, bbox_coordinates, crs, date_range, resolution, out_dir, filter='eo:cloud_cover < 50'):
+    def download_s2_s3_data_pack(self, bbox_coordinates, crs, date_range, resolution, out_dir, filter='eo:cloud_cover < 50'):
 
         available_data = self.search_data(bbox_coordinates, crs, date_range, filter=filter)
         aoi_bbox = BBox(bbox=bbox_coordinates, crs=CRS(crs))
@@ -110,3 +115,14 @@ class SentinelData:
             save_tiff_and_metadata(sentinel_3_data_array, transform, crs, f"{out_dir}/Sentinel-3/s3_{day}.tiff",
                                    bands_metadata_sentinel2)
 
+    def download_s2_data_weekly(self, bbox_coordinates, crs, date_range, resolution, out_dir):
+        aoi_bbox = BBox(bbox=bbox_coordinates, crs=CRS(crs))
+        aoi_size = bbox_to_dimensions(aoi_bbox, resolution=resolution)
+        transform = from_bounds(*aoi_bbox, aoi_size[0], aoi_size[1])
+        bands_metadata_sentinel2 = {"bands": ["B03", "B04", "B08", "B11"]}
+        Path(os.path.join(out_dir, "Sentinel-2-weeks")).mkdir(parents=True, exist_ok=True)
+        weeks = normalize_to_weeks(date_range)
+        for week in weeks:
+            sentinel_2_mosaic_data_array = self.download_sentinel2_data(bbox_coordinates, crs, week, resolution)
+            save_tiff_and_metadata(sentinel_2_mosaic_data_array, transform, crs, f"{out_dir}/Sentinel-2-weeks/s2_{week[0]}-{week[1]}.tiff",
+                                   bands_metadata_sentinel2)

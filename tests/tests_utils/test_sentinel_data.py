@@ -53,7 +53,7 @@ def test_download_data_pack(tmp_path):
     resolution = 10  # Resolution in meters (for Sentinel-3)
 
     sentinel_data = SentinelData()  # Assuming SentinelData is your class
-    sentinel_data.download_data_pack(bbox_coords, crs, date_range, resolution, tmp_path, filter='eo:cloud_cover < 40')
+    sentinel_data.download_s2_s3_data_pack(bbox_coords, crs, date_range, resolution, tmp_path, filter='eo:cloud_cover < 40')
 
     # Define the expected folder names (adjust based on your logic)
     folder1 = tmp_path / "Sentinel-2"

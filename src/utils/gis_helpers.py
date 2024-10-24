@@ -1,18 +1,8 @@
 #import geopandas as gpd
 import json
-
-from shapely.geometry import Point, box
-from pyproj import Transformer
-from shapely.geometry import Point, box
-from pyproj import Transformer
-import rasterio
-from rasterio.transform import from_bounds
+from matplotlib import pyplot as plt
 from rasterio.crs import CRS as rasterio_CRS
-from rasterio.crs import CRS
 from pyproj import Transformer
-from io import BytesIO
-from PIL import Image
-import numpy as np
 
 
 def save_tiff_and_metadata(array_data, transform, crs_epsg, output_path, bands_metadata):
@@ -68,6 +58,141 @@ def transform_bbox(bbox, origin_epsg, target_epsg):
     xmin, ymin = transformer.transform(bbox[0], bbox[1])
     xmax, ymax = transformer.transform(bbox[2], bbox[3])
     return xmin, ymin, xmax, ymax
+
+
+import os
+import numpy as np
+import rasterio
+from rasterio.enums import Resampling
+from scipy import stats
+
+
+def aggregate_rasters(working_dir, out_dir, method='average'):
+    ui_rasters = [os.path.join(working_dir, f) for f in os.listdir(working_dir) if f.endswith("_ui.tiff")]
+
+    raster_stack = []
+
+    # Read each UI raster and stack them in memory
+    for ui_raster in ui_rasters:
+        with rasterio.open(ui_raster) as src:
+            raster_data = src.read(1).astype(float)  # Read the first band
+            raster_data[raster_data == src.nodata] = np.nan  # Treat nodata as NaN
+
+            # Ensure that all rasters have the same shape by resizing (if needed)
+            if len(raster_stack) > 0:
+                if raster_data.shape != raster_stack[0].shape:
+                    print(f"Skipping {ui_raster}: shape mismatch with others.")
+                    continue  # Skip if shape doesn't match
+
+            raster_stack.append(raster_data)
+
+    # Ensure all rasters have the same shape before stacking
+    if len(raster_stack) == 0:
+        raise ValueError("No valid rasters found for aggregation.")
+
+    # Convert list to 3D numpy array (stack of 2D rasters)
+    stacked_array = np.stack(raster_stack, axis=0)
+
+    # Aggregation based on method
+    if method == 'average':
+        aggregated_raster = np.nanmean(stacked_array, axis=0)
+    elif method == 'median':
+        aggregated_raster = np.nanmedian(stacked_array, axis=0)
+    elif method == 'max':
+        aggregated_raster = np.nanmax(stacked_array, axis=0)
+    elif method == 'min':
+        aggregated_raster = np.nanmin(stacked_array, axis=0)
+
+        # After calculating the mode, replace placeholder (-9999) back with NaN
+        aggregated_raster[aggregated_raster == -9999] = np.nan
+
+    # Save the aggregated raster
+    with rasterio.open(ui_rasters[0]) as src:
+        out_meta = src.meta.copy()
+        out_meta.update(dtype='float32')
+
+    output_file = os.path.join(out_dir, 'aggregated_ui.tiff')
+    with rasterio.open(output_file, 'w', **out_meta) as dest:
+        dest.write(aggregated_raster.astype('float32'), 1)
+
+    return output_file
+
+
+def plot_geotiff(tiff_file_path):
+    # Open the GeoTIFF file
+    with rasterio.open(tiff_file_path) as dataset:
+        # Read the first band (for single-band GeoTIFFs)
+        band1 = dataset.read(1)
+
+        # Plot the data using matplotlib
+        plt.figure(figsize=(10, 10))
+        plt.imshow(band1, cmap='viridis')  # You can change 'viridis' to another colormap
+        plt.colorbar(label='Pixel Values')  # Add a color bar
+        plt.title('GeoTIFF Plot')
+        plt.xlabel('X (pixels)')
+        plt.ylabel('Y (pixels)')
+        plt.show()
+
+
+
+def calculate_utm_zone(longitude):
+    return int((longitude + 180) / 6) % 60 + 1
+
+
+def is_northern_hemisphere(latitude):
+    return latitude >= 0
+
+
+def calculate_centroid(north_lat, south_lat, east_lng, west_lng):
+    centroid_lat = (north_lat + south_lat) / 2
+    centroid_lng = (east_lng + west_lng) / 2
+    return centroid_lat, centroid_lng
+
+
+def convert_bbox_to_utm(north_lat, south_lat, east_lng, west_lng):
+    # Calculate the centroid of the bounding box
+    centroid_lat, centroid_lng = calculate_centroid(north_lat, south_lat, east_lng, west_lng)
+
+    # Determine the UTM zone from the centroid longitude
+    utm_zone = calculate_utm_zone(centroid_lng)
+
+    # Determine the hemisphere from the centroid latitude
+    northern_hemisphere = is_northern_hemisphere(centroid_lat)
+
+    # Construct the EPSG code
+    if northern_hemisphere:
+        epsg_code = 32600 + utm_zone  # Northern Hemisphere
+    else:
+        epsg_code = 32700 + utm_zone  # Southern Hemisphere
+
+    # Create a transformer object
+    transformer = Transformer.from_crs(
+        "epsg:4326",  # Source CRS (WGS 84)
+        f"epsg:{epsg_code}",  # Target CRS (UTM zone)
+        always_xy=True  # Ensure (lon, lat) order
+    )
+
+    # Convert each corner of the bounding box
+    west_x, north_y = transformer.transform(west_lng, north_lat)
+    east_x, south_y = transformer.transform(east_lng, south_lat)
+
+    # Return the UTM bounding box and CRS
+    bounding_box_utm = {
+        'north_y': north_y,
+        'south_y': south_y,
+        'west_x': west_x,
+        'east_x': east_x
+    }
+
+    crs_info = {
+        'utm_zone': utm_zone,
+        'epsg_code': epsg_code,
+        'northern_hemisphere': northern_hemisphere
+    }
+
+    return bounding_box_utm, crs_info
+
+
 # gpd numpy conflict
 """
 def create_square_bbox_wgs84(center_point, distance_km):
@@ -113,13 +238,3 @@ def create_square_bbox_wgs84(center_point, distance_km):
 
     return gdf
 """
-if __name__ == "__main__":
-    # Example usage
-    center_point = (13.4, 51.13)  # Longitude, Latitude in WGS84
-    distance_km = 1000  # Distance in kilometers
-
-    # Create the square bounding box
-    bbox_gdf = create_square_bbox_wgs84(center_point, distance_km)
-    bbox_gdf.to_file("bbox", driver='ESRI Shapefile')
-    # Display the result
-    print(bbox_gdf)
