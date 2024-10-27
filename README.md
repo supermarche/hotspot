@@ -11,6 +11,8 @@ This project aims to generate maps of Land Surface Temperature (LST) and Urban I
   - [Downloading Data](#downloading-data)
   - [Calculating Urban Index (UI)](#calculating-urban-index-ui)
   - [Calculating Land Surface Temperature (LST)](#calculating-land-surface-temperature-lst)
+- [API and Secrets Configuration](#api-and-secrets-configuration)
+- [Testing](#testing)
 - [References](#references)
   - [Land Surface Temperature (LST)](#land-surface-temperature-lst)
   - [Urban Index (UI)](#urban-index-ui)
@@ -159,6 +161,44 @@ The Urban Index (UI) is calculated to identify urban areas by using spectral cha
 
 ---
 
+## API and Secrets Configuration
+
+This application requires access to the Sentinel API to download Copernicus data. You will need to register and obtain your API credentials.
+
+1. **Register for API Access**: Sign up at the Copernicus Data Hub to get your credentials. You can find and manage your API secrets on your [Copernicus account settings page](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings).
+
+2. **Setting Up Secrets**:
+   - After obtaining your secrets, -> src/utils/sentinel_secrets.py.
+
+3. **Using Sentinel Hub Python Library**:
+   - This project uses the [Sentinel Hub Python Library](https://github.com/sentinel-hub) to interact with the Sentinel API. Refer to the Sentinel Hub documentation for more detailed setup instructions.
+
+---
+
+## Testing
+
+To ensure the reliability and correctness of the code, a suite of unit tests is provided using the `pytest` framework. The tests are located in the `tests` directory.
+
+### Running Tests
+
+1. **Install pytest** (if not already installed):
+
+   ```bash
+   pip install pytest
+   ```
+
+2. **Run the tests**:
+
+   From the root directory of the project, run:
+
+   ```bash
+   pytest tests/
+   ```
+
+   This command will discover and execute all tests in the `tests` directory.
+
+---
+
 ## References
 
 ### Land Surface Temperature (LST)
@@ -176,13 +216,14 @@ The Urban Index (UI) is calculated to identify urban areas by using spectral cha
       - "Land_Surface_Temperature_Retrieval_from_Landsat_5.pdf"
 
 - **Case Studies and Examples**:
-  - [Urban Heat Island Mapping with Sentinel-2 and Sentinel-3](https://terrascope.be/en/cases/urban-heat-island-mapping-combined-sentinel-2-and-sentinel-3-observations)
+  - [Urban Heat Island Mapping with Sentinel-2 and Sentinel-3](https://terrascope.be/en/c
+
+ases/urban-heat-island-mapping-combined-sentinel-2-and-sentinel-3-observations)
   - **Landsat Example**:
     - [Land Surface Temperature Mapping with Landsat 8](https://custom-scripts.sentinel-hub.com/landsat-8/land_surface_temperature_mapping/)
   - **Sentinel-3 Example**:
     - [Land Surface Temperature with Sentinel-3](https://custom-scripts.sentinel-hub.com/sentinel-3/land_surface_temperature/)
-  - **Overview of LST in Remote Sensing**:
-    - "520257208.pdf"
+
 
 ### Urban Index (UI)
 
@@ -203,7 +244,7 @@ The Urban Index (UI) is calculated to identify urban areas by using spectral cha
 
 ## License
 
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+This project is licensed under the GNU General Public License (GPL) - see the [LICENSE](LICENSE) file for details.
 
 ---
 
@@ -215,4 +256,4 @@ Feel free to contribute to this project by submitting issues or pull requests. Y
 
 ---
 
-**Contact**: For questions or support, please contact [your_email@example.com](mailto:your_email@example.com).
+This README now includes the necessary steps for setting up Sentinel API access, references the Sentinel Hub GitHub library, and reflects the GNU GPL license.

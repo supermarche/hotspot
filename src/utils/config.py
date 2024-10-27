@@ -20,12 +20,16 @@ def authenticate_session():
     return oauth, token
 
 
-def load_config():
+def load_config(api_keys=False):
     config = SHConfig()
 
     # Add your Sentinel Hub API credentials
-    config.sh_client_id = client_name
-    config.sh_client_secret = client_secret
+    if api_keys:
+        config.sh_client_id = api_keys['client_name']
+        config.sh_client_secret = api_keys['client_secret']
+    else:
+        config.sh_client_id = client_name
+        config.sh_client_secret = client_secret
     config.sh_base_url = 'https://sh.dataspace.copernicus.eu'
     config.sh_token_url = 'https://identity.dataspace.copernicus.eu/auth/realms/CDSE/protocol/openid-connect/token'
     # Get the OAuth2 token

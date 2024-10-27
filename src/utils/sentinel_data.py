@@ -11,8 +11,11 @@ from src.utils.helper_functions import normalize_to_weeks
 
 
 class SentinelData:
-    def __init__(self):
-        self.config = load_config()
+    def __init__(self, api_keys=False):
+        if api_keys:
+            self.config = load_config(api_keys)
+        else:
+            self.config = load_config()
 
     def download_sentinel2_data(self, bbox_coordinates, crs, date_range, resolution):
         evalscript = """

@@ -1,21 +1,30 @@
+import os
+import sys
 import tkinter as tk
 from tkinter import filedialog, messagebox, ttk
 from tkintermapview import TkinterMapView
-import numpy as np
-import rasterio  # To handle the raster file (GeoTIFF)
 from geopy.geocoders import Nominatim
-from sentinelhub import BBox, CRS
-
-from src.utils.gis_helpers import plot_geotiff, convert_bbox_to_utm
+from src.utils.gis_helpers import plot_geotiff, convert_bbox_to_utm, smooth_raster
 from src.utils.lst_calculator import calculate_lst
 from src.utils.sentinel_data import SentinelData
 from src.utils.ui_calculator import calculate_ui  # Assuming a new UI calculation function
 
+if getattr(sys, 'frozen', False):
+    base_path = sys._MEIPASS  # For PyInstaller bundles
+else:
+    base_path = os.path.dirname(__file__)
+
+# Set GDAL_DATA and PROJ_LIB to use the bundled resources
+os.environ['GDAL_DATA'] = os.path.join(base_path, 'gdal_data')
+os.environ['PROJ_LIB'] = os.path.join(base_path)
 
 class SentinelDownloaderApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Sentinel Data Downloader and Processor")
+
+        # Store API keys as instance variables
+        self.api_keys = {'client_name': '', 'client_secret': ''}
 
         # Create a main frame to hold the notebook and map side by side
         self.main_frame = tk.Frame(self.root)
@@ -34,19 +43,18 @@ class SentinelDownloaderApp:
         self.download_tab = ttk.Frame(self.notebook)
         self.ui_tab = ttk.Frame(self.notebook)
         self.lst_tab = ttk.Frame(self.notebook)
+        self.settings_tab = ttk.Frame(self.notebook)  # New Settings tab
 
         self.notebook.add(self.download_tab, text="Download Data")
         self.notebook.add(self.ui_tab, text="Calculate UI")
         self.notebook.add(self.lst_tab, text="Calculate LST")
+        self.notebook.add(self.settings_tab, text="Settings")  # New tab
 
-        # Set up the Download tab
+        # Set up the tabs
         self.setup_download_tab()
-
-        # Set up the LST tab
         self.setup_lst_tab()
-
-        # Set up the UI tab
         self.setup_ui_tab()
+        self.setup_settings_tab()
 
         # Variable to store the output directory path
         self.output_dir = ""
@@ -118,17 +126,37 @@ class SentinelDownloaderApp:
         # Add a header or description for the tab
         self.lst_description_label = tk.Label(self.lst_tab, text="Land Surface Temperature (LST) - Alpha Version",
                                               font=("Arial", 14, "bold"))
-        self.lst_description_label.pack(padx=10, pady=10)
+        self.lst_description_label.grid(row=0, column=0, columnspan=2, padx=10, pady=10, sticky="w")
 
         # Add a sub-description about the version status
         self.lst_version_label = tk.Label(self.lst_tab,
                                           text="Note: This feature is in alpha version and may not work as expected.",
                                           fg="red")
-        self.lst_version_label.pack(padx=10, pady=5)
+        self.lst_version_label.grid(row=1, column=0, columnspan=2, padx=10, pady=5, sticky="w")
 
-        # Button to calculate LST (Land Surface Temperature)
+        # Frame for LST parameters in a single row
+        self.lst_params_frame = tk.Frame(self.lst_tab)
+        self.lst_params_frame.grid(row=2, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+
+        # Sigma label and entry
+        self.sigma_label = tk.Label(self.lst_params_frame, text="Sigma:")
+        self.sigma_label.pack(side=tk.LEFT, padx=5, pady=5)
+
+        self.sigma_entry = tk.Entry(self.lst_params_frame, width=10)
+        self.sigma_entry.pack(side=tk.LEFT, padx=5, pady=5)
+        self.sigma_entry.insert(0, "2")  # Default sigma value for smoothing
+
+        # Smooth Raster button on the same row
+        self.smooth_s3_raster = tk.Button(self.lst_params_frame, text="Smooth S-3 Raster", command=self.smooth_s3)
+        self.smooth_s3_raster.pack(side=tk.LEFT, padx=10, pady=5)
+
+        # Button to calculate LST (Land Surface Temperature) in a separate row
         self.calculate_lst_button = tk.Button(self.lst_tab, text="Calculate LST", command=self.calculate_lst)
-        self.calculate_lst_button.pack(padx=10, pady=10)
+        self.calculate_lst_button.grid(row=3, column=0, columnspan=2, padx=10, pady=10, sticky="ew")
+
+        # Configure weights for resizing
+        self.lst_tab.columnconfigure(0, weight=1)
+        self.lst_tab.columnconfigure(1, weight=1)
 
     def setup_ui_tab(self):
         # Add a header or description for the tab
@@ -167,6 +195,7 @@ class SentinelDownloaderApp:
 
         self.ndwi_label = tk.Label(self.ui_params_frame, text="NDWI Threshold:")
         self.ndwi_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
+
         self.ndwi_entry = tk.Entry(self.ui_params_frame, width=20)
         self.ndwi_entry.grid(row=0, column=1, padx=5, pady=5)
         self.ndwi_entry.insert(0, "0.3")  # Default value
@@ -186,6 +215,33 @@ class SentinelDownloaderApp:
         # Button to calculate UI
         self.calculate_ui_button = tk.Button(self.ui_tab, text="Calculate UI", command=self.calculate_ui)
         self.calculate_ui_button.pack(padx=10, pady=10)
+
+    def setup_settings_tab(self):
+        """Set up the Settings tab for API keys entry."""
+        self.settings_frame = tk.Frame(self.settings_tab)
+        self.settings_frame.pack(padx=10, pady=10, fill=tk.BOTH, expand=True)
+
+        # Client ID entry
+        self.client_id_label = tk.Label(self.settings_frame, text="Client ID:")
+        self.client_id_label.grid(row=0, column=0, padx=5, pady=5, sticky='e')
+        self.client_id_entry = tk.Entry(self.settings_frame, width=40)
+        self.client_id_entry.grid(row=0, column=1, padx=5, pady=5, sticky='w')
+
+        # Client Secret entry
+        self.client_secret_label = tk.Label(self.settings_frame, text="Client Secret:")
+        self.client_secret_label.grid(row=1, column=0, padx=5, pady=5, sticky='e')
+        self.client_secret_entry = tk.Entry(self.settings_frame, width=40, show="*")
+        self.client_secret_entry.grid(row=1, column=1, padx=5, pady=5, sticky='w')
+
+        # Save API Keys button
+        self.save_api_button = tk.Button(self.settings_frame, text="Save API Keys", command=self.save_api_keys)
+        self.save_api_button.grid(row=2, column=0, columnspan=2, pady=10)
+
+    def save_api_keys(self):
+        """Save API keys from the settings tab."""
+        self.api_keys['client_name'] = self.client_id_entry.get()
+        self.api_keys['client_secret'] = self.client_secret_entry.get()
+        messagebox.showinfo("API Keys", "API keys saved successfully.")
 
     def setup_map_section(self):
         # Map Section: Integrating OpenStreetMap with a bounding box selector
@@ -221,7 +277,6 @@ class SentinelDownloaderApp:
         # Set default map position and zoom
         self.map_widget.set_position(51.155, 14.988)  # Default location Görlitz/Zgorzelec
         self.map_widget.set_zoom(10)
-
 
     def browse_output_dir(self):
         self.output_dir = filedialog.askdirectory()
@@ -294,7 +349,7 @@ class SentinelDownloaderApp:
                 return
 
             # Create a SentinelData instance and download Sentinel-2 and Sentinel-3 data
-            sentinel_data = SentinelData()
+            sentinel_data = SentinelData(api_keys=self.api_keys if self.api_keys['client_name'] else False)
             sentinel_data.download_s2_s3_data_pack(bbox_coords, crs, date_range, 10, self.output_dir_entry.get(),
                                                    filter=filter_string)
 
@@ -317,7 +372,7 @@ class SentinelDownloaderApp:
                 return
 
             # Create a SentinelData instance and download data for each week
-            sentinel_data = SentinelData()
+            sentinel_data = SentinelData(api_keys=self.api_keys if self.api_keys['client_name'] else False)
             sentinel_data.download_s2_data_weekly(bbox_coords, crs, date_range, 10, self.output_dir_entry.get())
 
             messagebox.showinfo("Success", "Sentinel-2 weekly data downloaded successfully.")
@@ -331,8 +386,11 @@ class SentinelDownloaderApp:
                 return
 
             # Call the function to calculate LST
-            calculate_lst(self.output_dir_entry.get())
+            raster_path = calculate_lst(self.output_dir_entry.get())
             messagebox.showinfo("Success", "LST calculation completed successfully.")
+            # Plot the generated raster on the map (if possible)
+            plot_geotiff(raster_path)
+
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred during LST calculation: {e}")
 
@@ -356,6 +414,20 @@ class SentinelDownloaderApp:
 
         except Exception as e:
             messagebox.showerror("Error", f"An error occurred during UI calculation: {e}")
+
+    def smooth_s3(self):
+        try:
+            if not self.output_dir_entry.get():
+                messagebox.showerror("Error", "No output directory found. Please download the data first.")
+                return
+            sigma = float(self.sigma_entry.get())
+            input_path = os.path.join(self.output_dir, "Sentinel-3")  # Example input file path
+            output_path = os.path.join(self.output_dir, "Sentinel-3-smooth")  # Example output file path
+
+            smooth_raster(input_path, output_path, sigma=sigma)
+            messagebox.showinfo("Success", f"Smoothed raster saved to: {output_path}")
+        except Exception as e:
+            messagebox.showerror("Error", f"An error occurred while smoothing the raster: {e}")
 
 
 # Initialize Tkinter root and run the app

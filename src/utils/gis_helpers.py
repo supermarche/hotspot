@@ -3,6 +3,7 @@ import json
 from matplotlib import pyplot as plt
 from rasterio.crs import CRS as rasterio_CRS
 from pyproj import Transformer
+from scipy.ndimage import gaussian_filter
 
 
 def save_tiff_and_metadata(array_data, transform, crs_epsg, output_path, bands_metadata):
@@ -191,6 +192,71 @@ def convert_bbox_to_utm(north_lat, south_lat, east_lng, west_lng):
     }
 
     return bounding_box_utm, crs_info
+
+
+def smooth_raster(input_path, output_path, sigma=2, band_to_save=1):
+    """
+    Smooths a multi-band raster by applying a Gaussian filter to each band and saves a single-band output.
+
+    Parameters:
+    - input_path (str): Path to the input raster file or directory containing raster files.
+    - output_path (str): Path to save the smoothed output raster or directory to save multiple smoothed rasters.
+    - sigma (float): The standard deviation for the Gaussian filter. Higher values result in stronger smoothing.
+    - band_to_save (int): The band index (1-based) to save in the output file.
+    """
+    # Ensure output directory exists if processing multiple files
+    if os.path.isdir(input_path) and not os.path.exists(output_path):
+        os.makedirs(output_path)
+
+    if os.path.isdir(input_path) and os.path.isdir(output_path):
+        # Loop over each .tif file in the input directory
+        for filename in os.listdir(input_path):
+            if filename.endswith(".tiff"):
+                input_file = os.path.join(input_path, filename)
+                output_file = os.path.join(output_path, filename)
+
+                # Apply smoothing to the file
+                _smooth_single_raster(input_file, output_file, sigma, band_to_save)
+
+    elif os.path.isfile(input_path):
+        # If input_path is a file, process it directly and check/create output directory if necessary
+        if not os.path.exists(os.path.dirname(output_path)):
+            os.makedirs(os.path.dirname(output_path))
+        _smooth_single_raster(input_path, output_path, sigma, band_to_save)
+    else:
+        print("Invalid input or output path. Please ensure both are either directories or file paths.")
+
+
+def _smooth_single_raster(input_file, output_file, sigma, band_to_save):
+    """
+    Smooths each band of a multi-band raster file and saves all bands as a multi-band output.
+
+    Parameters:
+    - input_file (str): Path to the input raster file.
+    - output_file (str): Path to save the smoothed output raster.
+    - sigma (float): The standard deviation for the Gaussian filter.
+    """
+    # Open the input raster file
+    with rasterio.open(input_file) as src:
+        profile = src.profile  # Copy the metadata profile
+        profile.update(dtype=rasterio.float32)  # Update profile for output data type
+
+        # Prepare an array to store all smoothed bands
+        smoothed_bands = []
+
+        # Read each band, apply smoothing, and append to the list
+        for i in range(1, src.count + 1):
+            band_data = src.read(i)
+            smoothed_band = gaussian_filter(band_data, sigma=sigma)
+            smoothed_bands.append(smoothed_band.astype(rasterio.float32))
+
+        # Write all smoothed bands to the output raster file
+        with rasterio.open(output_file, 'w', **profile) as dst:
+            for idx, band_data in enumerate(smoothed_bands, start=1):
+                dst.write(band_data, idx)
+
+    print(f"Smoothed raster saved to {output_file}")
+
 
 
 # gpd numpy conflict

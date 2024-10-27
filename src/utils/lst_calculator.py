@@ -88,6 +88,10 @@ def calculate_lst(working_dir):
     """
     sentinel2_dir = os.path.join(working_dir, 'Sentinel-2')
     sentinel3_dir = os.path.join(working_dir, 'Sentinel-3')
+    sentinel3_smooth_dir = os.path.join(working_dir, 'Sentinel-3-smooth')
+    if os.path.exists(sentinel3_smooth_dir):
+        sentinel3_dir=sentinel3_smooth_dir
+
     lst_dir = os.path.join(working_dir, 'LST_days')
     os.makedirs(lst_dir, exist_ok=True)  # Create LST output directory if not exist
 
@@ -122,6 +126,7 @@ def calculate_lst(working_dir):
         lst_mean_path = os.path.join(working_dir, "LST_mean.tiff")
         calculate_mean_lst(lst_files, lst_mean_path)
         print(f"LST mean raster saved to {lst_mean_path}")
+        return lst_mean_path
     else:
         print("No LST files created.")
 
