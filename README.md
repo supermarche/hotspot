@@ -168,7 +168,7 @@ This application requires access to the Sentinel API to download Copernicus data
 1. **Register for API Access**: Sign up at the Copernicus Data Hub to get your credentials. You can find and manage your API secrets on your [Copernicus account settings page](https://shapps.dataspace.copernicus.eu/dashboard/#/account/settings).
 
 2. **Setting Up Secrets**:
-   - After obtaining your secrets, -> src/utils/sentinel_secrets.py.
+   - After obtaining your secrets, you cen set them in settings tab or in src/utils/sentinel_secrets.py.
 
 3. **Using Sentinel Hub Python Library**:
    - This project uses the [Sentinel Hub Python Library](https://github.com/sentinel-hub) to interact with the Sentinel API. Refer to the Sentinel Hub documentation for more detailed setup instructions.
